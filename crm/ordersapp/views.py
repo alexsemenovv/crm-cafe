@@ -53,3 +53,12 @@ class OrderCreateView(CreateView):
     success_url = reverse_lazy(
         "ordersapp:index"
     )
+
+
+class OrderListView(ListView):
+    """
+    Класс для отображения списка заказов
+    """
+    template_name = "ordersapp/orders_list.html"
+    context_object_name = "orders"
+    queryset = Order.objects.all()

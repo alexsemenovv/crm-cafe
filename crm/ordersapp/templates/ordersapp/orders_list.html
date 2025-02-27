@@ -1,0 +1,27 @@
+{% extends 'ordersapp/base.html' %}
+
+{% block title %}
+  Список заказов
+{% endblock %}
+
+{% block body %}
+  <h1>Список заказов:</h1>
+  {% if orders %}
+    <div>
+      {% for order in orders %}
+        <p>Номер стола: {{ order.table_number }}</p>
+        <p>Статус: {{ order.status }}</p>
+        <p>Список блюд: </p>
+        <ul>
+          {% for item in order.items.all %}
+            <li>{{ item.name }} - {{ item.price }} руб</li>
+          {% endfor %}
+        </ul>
+        <p>Сумма: {{ order.total_price }} руб</p>
+        <br>
+      {% endfor %}
+    </div>
+  {% else %}
+    <h3>Скоро здесь появятся заказы</h3>
+  {% endif %}
+{% endblock %}
