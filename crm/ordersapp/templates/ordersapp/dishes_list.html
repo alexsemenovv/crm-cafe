@@ -1,0 +1,19 @@
+{% extends 'ordersapp/base.html' %}
+
+{% block title %}
+  Список блюд
+{% endblock %}
+
+{% block body %}
+  <h1>Список доступных блюд:</h1>
+  {% if dishes  %}
+    <div>
+      {% for dish in dishes %}
+        <p>Название блюда: {{ dish.name }}</p>
+        <p>Описание: {{ dish.description }}</p>
+        <p>Стоимость: {{ dish.price }}</p>
+        <br>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endblock %}

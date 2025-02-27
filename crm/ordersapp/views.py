@@ -1,7 +1,7 @@
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import CreateView
+from django.views.generic import CreateView, ListView
 
 from .models import Dish
 
@@ -30,3 +30,13 @@ class DishCreateView(CreateView):
     success_url = reverse_lazy(
         "ordersapp:index"
     )
+
+class DishListView(ListView):
+    """
+    Класс для отображения списка блюд
+    """
+    template_name = "ordersapp/dishes_list.html"
+    context_object_name = "dishes"
+    queryset = Dish.objects.all()
+
+
