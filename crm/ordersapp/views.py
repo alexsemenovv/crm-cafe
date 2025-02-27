@@ -49,9 +49,8 @@ class OrderCreateView(CreateView):
     fields = "table_number", "items"
     template_name_suffix = "_create"
 
-    # TODO изменить перенаправление на order_list
     success_url = reverse_lazy(
-        "ordersapp:index"
+        "ordersapp:orders_list"
     )
 
 

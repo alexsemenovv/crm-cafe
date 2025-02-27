@@ -9,6 +9,7 @@
   {% if orders %}
     <div>
       {% for order in orders %}
+        <p>ID: {{ order.pk }}</p>
         <p>Номер стола: {{ order.table_number }}</p>
         <p>Статус: {{ order.status }}</p>
         <p>Список блюд: </p>
