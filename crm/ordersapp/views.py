@@ -5,6 +5,7 @@ from django.views.generic import (
     CreateView,
     ListView,
     DeleteView,
+    UpdateView,
 )
 
 from .models import Dish, Order
@@ -70,4 +71,11 @@ class OrderListView(ListView):
 class OrderDeleteView(DeleteView):
     """Класс для получения деталей продукта"""
     model = Order
+    success_url = reverse_lazy("ordersapp:orders_list")
+
+
+class OrderUpdateView(UpdateView):
+    model = Order
+    fields = ("status", )
+    template_name_suffix = "_update_form"
     success_url = reverse_lazy("ordersapp:orders_list")

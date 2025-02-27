@@ -11,7 +11,7 @@
       {% for order in orders %}
         <p>ID: {{ order.pk }}</p>
         <p>Номер стола: {{ order.table_number }}</p>
-        <p>Статус: {{ order.status }}</p>
+        <p>Статус: <a href="{% url 'ordersapp:order_update' pk=order.pk %}">{{ order.status }}</a></p>
         <p>Список блюд: </p>
         <ul>
           {% for item in order.items.all %}
