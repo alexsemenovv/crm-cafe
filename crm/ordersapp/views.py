@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView
 
-from .models import Dish
+from .models import Dish, Order
 
 
 # Create your views here.
@@ -28,8 +28,9 @@ class DishCreateView(CreateView):
     fields = "name", "description", "price"
 
     success_url = reverse_lazy(
-        "ordersapp:index"
+        "ordersapp:dishes_list"
     )
+
 
 class DishListView(ListView):
     """
@@ -40,3 +41,15 @@ class DishListView(ListView):
     queryset = Dish.objects.all()
 
 
+class OrderCreateView(CreateView):
+    """
+    Класс для создания заказа
+    """
+    model = Order
+    fields = "table_number", "items"
+    template_name_suffix = "_create"
+
+    # TODO изменить перенаправление на order_list
+    success_url = reverse_lazy(
+        "ordersapp:index"
+    )
