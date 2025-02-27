@@ -19,6 +19,9 @@
           {% endfor %}
         </ul>
         <p>Сумма: {{ order.total_price }} руб</p>
+        <div>
+          <a href="{% url 'ordersapp:order_delete' pk=order.pk %}">Отменить заказ</a>
+        </div>
         <br>
       {% endfor %}
     </div>

@@ -1,0 +1,21 @@
+{% extends 'ordersapp/base.html' %}
+
+{% block title %}
+    Удаление заказа {{ object.pk }}
+{% endblock %}
+
+{% block body %}
+<h1>Вы уверены, что хотите отменить заказ {{ object.id }}?</h1>
+<div>
+    <br>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Отменить</button>
+    </form>
+
+  </div>
+    <a href="{% url 'ordersapp:orders_list' %}">Back to orders</a>
+  <div>
+</div>
+{% endblock %}

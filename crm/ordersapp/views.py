@@ -1,7 +1,11 @@
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, ListView
+from django.views.generic import (
+    CreateView,
+    ListView,
+    DeleteView,
+)
 
 from .models import Dish, Order
 
@@ -61,3 +65,9 @@ class OrderListView(ListView):
     template_name = "ordersapp/orders_list.html"
     context_object_name = "orders"
     queryset = Order.objects.all()
+
+
+class OrderDeleteView(DeleteView):
+    """Класс для получения деталей продукта"""
+    model = Order
+    success_url = reverse_lazy("ordersapp:orders_list")
