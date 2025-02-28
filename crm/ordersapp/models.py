@@ -26,14 +26,14 @@ class Order(models.Model):
     в кафе
     """
     STATUS_CHOICES = [
-        ("pending", "В ожидании"),
-        ("ready", "Готово"),
-        ("paid", "Оплачено"),
+        ("В ожидании", "В ожидании"),
+        ("Готово", "Готово"),
+        ("Оплачено", "Оплачено"),
     ]
     table_number = models.IntegerField(db_index=True)
     items = models.ManyToManyField(Dish, related_name='orders')
     total_price = models.DecimalField(default=0, max_digits=8, decimal_places=2)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="pending", db_index=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="В ожидании", db_index=True)
 
     def __str__(self):
-        return f"Заказ {self.id} - Стол {self.table_number} ({self.get_status_display()})"
+        return f"Заказ {self.pk} - Стол {self.table_number} ({self.status})"
