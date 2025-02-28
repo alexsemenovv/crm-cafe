@@ -45,6 +45,8 @@
             <td>{{ order.total_price }} руб</td>
             <td>
               <a href="{% url 'ordersapp:order_delete' pk=order.pk %}">Отменить</a>
+              <br>
+              <a href="{% url 'ordersapp:order_update' pk=order.pk %}">Изменить</a>
             </td>
           </tr>
         {% endfor %}

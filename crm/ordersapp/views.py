@@ -82,7 +82,7 @@ class OrderUpdateView(UpdateView):
     Класс для обновления статуса заказа
     """
     model = Order
-    fields = ("status",)
+    fields = ("status", "items")
     template_name_suffix = "_update_form"
     success_url = reverse_lazy("ordersapp:orders_list")
 
