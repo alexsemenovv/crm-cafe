@@ -5,8 +5,18 @@
 {% endblock %}
 
 {% block body %}
+  <div>
+    <h1>Поиск</h1>
+    <form action="{% url 'ordersapp:order_search' %}" method="get">
+      <input name="q" type="text" placeholder="Введите номер стола или статус" size="30">
+      <button type="submit">
+            Искать
+      </button>
+    </form>
+    <br>
+  </div>
   {% if object_list %}
-    <h1>По вашему запросу найдено:</h1>
+    <h2>По вашему запросу найдено:</h2>
     <div>
       {% for order in object_list %}
         <p>ID: {{ order.pk }}</p>
@@ -26,18 +36,9 @@
       {% endfor %}
     </div>
   {% else %}
-    <h1>По вашему запросу ничего не найдено</h1>
+    <h2>По вашему запросу ничего не найдено</h2>
   {% endif %}
-<div>
-  <h2>Поиск</h2>
-  <form action="{% url 'ordersapp:order_search' %}" method="get">
-    <input name="q" type="text" placeholder="Введите номер стола или статус" size="30">
-    <button type="submit">
-          Искать
-    </button>
-  </form>
-  <br>
-</div>
+
 
 <div>
   <a href="{% url 'ordersapp:orders_list' %}">Назад к списку заказов</a>
