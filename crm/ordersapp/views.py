@@ -8,11 +8,20 @@ from django.views.generic import (
     DeleteView,
     UpdateView,
 )
+from rest_framework.viewsets import ModelViewSet
 
 from .models import Dish, Order
+from .serializers import OrderSerializer
 
 
-# Create your views here.
+class OrderViewSet(ModelViewSet):
+    """
+    Набор представлений для действий над Order
+    Полный CRUD для сущностей заказа
+    """
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+
 
 def order_index(request: HttpRequest) -> HttpResponse:
     """

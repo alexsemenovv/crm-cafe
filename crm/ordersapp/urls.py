@@ -1,4 +1,5 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 
 from .views import (
     order_index,
@@ -10,12 +11,16 @@ from .views import (
     OrderUpdateView,
     OrderSearchListView,
     OrderTotalIncomesListView,
+    OrderViewSet,
 )
 
 app_name = "ordersapp"
+routers = DefaultRouter()
+routers.register("orders", OrderViewSet)
 
 urlpatterns = [
     path("", order_index, name="index"),
+    path("api/", include(routers.urls)),
     path("dishes/create/", DishCreateView.as_view(), name='dish_create'),
     path("dishes/", DishListView.as_view(), name="dishes_list"),
 
