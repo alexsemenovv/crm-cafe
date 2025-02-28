@@ -9,6 +9,7 @@ from .views import (
     OrderDeleteView,
     OrderUpdateView,
     OrderSearchListView,
+    OrderTotalIncomesListView,
 )
 
 app_name = "ordersapp"
@@ -23,4 +24,5 @@ urlpatterns = [
     path("orders/<int:pk>/delete/", OrderDeleteView.as_view(), name='order_delete'),
     path('orders/<int:pk>/update/', OrderUpdateView.as_view(), name='order_update'),
     path('orders/search/', OrderSearchListView.as_view(), name='order_search'),
+    path('orders/total/', OrderTotalIncomesListView.as_view(), name='total_incomes'),
 ]

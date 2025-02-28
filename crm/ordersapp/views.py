@@ -101,3 +101,18 @@ class OrderSearchListView(ListView):
             Q(status__icontains=query) | Q(table_number__icontains=query)
         )
         return object_list
+
+
+class OrderTotalIncomesListView(ListView):
+    """
+    Класс для подсчета выручки за смену
+    """
+    model = Order
+    template_name = "ordersapp/total_incomes.html"
+
+    def get_queryset(self):
+        orders = Order.objects.prefetch_related("items").filter(
+            status__contains="Оплачено"
+        )
+        total = sum((item.total_price for item in orders.all()))
+        return orders, total

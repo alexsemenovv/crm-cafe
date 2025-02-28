@@ -37,8 +37,12 @@
         <br>
       {% endfor %}
     </div>
+  <div>
+    <a href="{% url 'ordersapp:total_incomes' %}">Выручка за смену</a>
+  </div>
   {% else %}
     <h3>Скоро здесь появятся заказы</h3>
   {% endif %}
+
 {% endblock %}
 

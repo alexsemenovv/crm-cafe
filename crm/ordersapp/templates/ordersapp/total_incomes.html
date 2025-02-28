@@ -1,0 +1,32 @@
+{% extends 'ordersapp/base.html' %}
+
+{% block title %}
+  Выручка
+{% endblock %}
+
+{% block body %}
+    <h1>Общая выручка за смену: {{ object_list.1 }} руб</h1>
+    {% if object_list %}
+        <div>
+          {% for order in object_list.0 %}
+            <p>ID: {{ order.pk }}</p>
+            <p>Номер стола: {{ order.table_number }}</p>
+            <p>Статус: <a href="{% url 'ordersapp:order_update' pk=order.pk %}">{{ order.status }}</a></p>
+            <p>Список блюд: </p>
+            <ul>
+              {% for item in order.items.all %}
+                <li>{{ item.name }} - {{ item.price }} руб</li>
+              {% endfor %}
+            </ul>
+            <p>Сумма: {{ order.total_price }} руб</p>
+            <div>
+              <a href="{% url 'ordersapp:order_delete' pk=order.pk %}">Отменить заказ</a>
+            </div>
+            <br>
+          {% endfor %}
+        </div>
+    {% endif %}
+<div>
+  <a href="{% url 'ordersapp:orders_list' %}">Назад к списку заказов</a>
+</div>
+{% endblock %}
