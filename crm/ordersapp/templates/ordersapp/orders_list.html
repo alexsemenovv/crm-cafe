@@ -6,43 +6,58 @@
 
 {% block body %}
   <h1>Список заказов</h1>
-  <div>
-   <h2>Поиск по номеру стола или статусу</h2>
-      <form action="{% url 'ordersapp:order_search' %}" method="get">
-        <input name="q" type="text" placeholder="Введите номер стола или статус" size="30">
-        <button type="submit">
-          Искать
-        </button>
-      </form>
-      <br>
-  </div>
 
+  <div>
+    <h2>Поиск по номеру стола или статусу</h2>
+    <form action="{% url 'ordersapp:order_search' %}" method="get">
+      <input name="q" type="text" placeholder="Введите номер стола или статус" size="30">
+      <button type="submit">Искать</button>
+    </form>
+    <br>
+  </div>
 
   {% if orders %}
+    <table border="1" cellspacing="0" cellpadding="5">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Номер стола</th>
+          <th>Статус</th>
+          <th>Список блюд</th>
+          <th>Сумма</th>
+          <th>Действия</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in orders %}
+          <tr>
+            <td>{{ order.pk }}</td>
+            <td>{{ order.table_number }}</td>
+            <td>
+              <a href="{% url 'ordersapp:order_update' pk=order.pk %}">{{ order.status }}</a>
+            </td>
+            <td>
+              <ul>
+                {% for item in order.items.all %}
+                  <li>{{ item.name }} - {{ item.price }} руб</li>
+                {% endfor %}
+              </ul>
+            </td>
+            <td>{{ order.total_price }} руб</td>
+            <td>
+              <a href="{% url 'ordersapp:order_delete' pk=order.pk %}">Отменить</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <br>
     <div>
-      {% for order in orders %}
-        <p>ID: {{ order.pk }}</p>
-        <p>Номер стола: {{ order.table_number }}</p>
-        <p>Статус: <a href="{% url 'ordersapp:order_update' pk=order.pk %}">{{ order.status }}</a></p>
-        <p>Список блюд: </p>
-        <ul>
-          {% for item in order.items.all %}
-            <li>{{ item.name }} - {{ item.price }} руб</li>
-          {% endfor %}
-        </ul>
-        <p>Сумма: {{ order.total_price }} руб</p>
-        <div>
-          <a href="{% url 'ordersapp:order_delete' pk=order.pk %}">Отменить заказ</a>
-        </div>
-        <br>
-      {% endfor %}
+      <a href="{% url 'ordersapp:total_incomes' %}">Выручка за смену</a>
     </div>
-  <div>
-    <a href="{% url 'ordersapp:total_incomes' %}">Выручка за смену</a>
-  </div>
   {% else %}
     <h3>Скоро здесь появятся заказы</h3>
   {% endif %}
 
 {% endblock %}
-
