@@ -78,14 +78,20 @@ class OrderDeleteView(DeleteView):
 
 
 class OrderUpdateView(UpdateView):
+    """
+    Класс для обновления статуса заказа
+    """
     model = Order
     fields = ("status",)
     template_name_suffix = "_update_form"
     success_url = reverse_lazy("ordersapp:orders_list")
 
 
-
 class OrderSearchListView(ListView):
+    """
+    Класс для поиска заказа по номеру стола,
+    либо статусу заказа
+    """
     model = Order
     template_name = "ordersapp/order_search.html"
 

@@ -9,7 +9,10 @@
   <div>
    <h2>Поиск по номеру стола или статусу</h2>
       <form action="{% url 'ordersapp:order_search' %}" method="get">
-        <input name="q" type="text" placeholder="Введите запрос...">
+        <input name="q" type="text" placeholder="Введите номер стола или статус" size="30">
+        <button type="submit">
+          Искать
+        </button>
       </form>
       <br>
   </div>
