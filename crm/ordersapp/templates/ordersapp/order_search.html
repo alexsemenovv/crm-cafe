@@ -1,23 +1,14 @@
 {% extends 'ordersapp/base.html' %}
 
 {% block title %}
-  Список заказов
+  Поиск заказов
 {% endblock %}
 
 {% block body %}
-  <h1>Список заказов</h1>
-  <div>
-   <h2>Поиск по номеру стола или статусу</h2>
-      <form action="{% url 'ordersapp:order_search' %}" method="get">
-        <input name="q" type="text" placeholder="Введите запрос...">
-      </form>
-      <br>
-  </div>
-
-
-  {% if orders %}
+  {% if object_list %}
+    <h1>По вашему запросу найдено:</h1>
     <div>
-      {% for order in orders %}
+      {% for order in object_list %}
         <p>ID: {{ order.pk }}</p>
         <p>Номер стола: {{ order.table_number }}</p>
         <p>Статус: <a href="{% url 'ordersapp:order_update' pk=order.pk %}">{{ order.status }}</a></p>
@@ -35,7 +26,18 @@
       {% endfor %}
     </div>
   {% else %}
-    <h3>Скоро здесь появятся заказы</h3>
+    <h1>По вашему запросу ничего не найдено</h1>
   {% endif %}
+<div>
+  <h2>Поиск</h2>
+  <form action="{% url 'ordersapp:order_search' %}" method="get">
+    <input name="q" type="text" placeholder="Search...">
+  </form>
+  <br>
+</div>
+
+<div>
+  <a href="{% url 'ordersapp:orders_list' %}">Назад к списку заказов</a>
+</div>
 {% endblock %}
 

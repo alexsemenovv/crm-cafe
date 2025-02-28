@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
@@ -69,13 +70,28 @@ class OrderListView(ListView):
 
 
 class OrderDeleteView(DeleteView):
-    """Класс для получения деталей продукта"""
+    """
+    Класс для получения деталей продукта
+    """
     model = Order
     success_url = reverse_lazy("ordersapp:orders_list")
 
 
 class OrderUpdateView(UpdateView):
     model = Order
-    fields = ("status", )
+    fields = ("status",)
     template_name_suffix = "_update_form"
     success_url = reverse_lazy("ordersapp:orders_list")
+
+
+
+class OrderSearchListView(ListView):
+    model = Order
+    template_name = "ordersapp/order_search.html"
+
+    def get_queryset(self):
+        query = self.request.GET.get('q')
+        object_list = Order.objects.filter(
+            Q(status__icontains=query) | Q(table_number__icontains=query)
+        )
+        return object_list
