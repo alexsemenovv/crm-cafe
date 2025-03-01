@@ -10,4 +10,5 @@ class OrderSerializer(serializers.ModelSerializer):
             "table_number",
             "items",
             "status",
+            "total_price",
         )

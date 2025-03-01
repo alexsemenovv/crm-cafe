@@ -8,6 +8,8 @@ from django.views.generic import (
     DeleteView,
     UpdateView,
 )
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.viewsets import ModelViewSet
 
 from .models import Dish, Order
@@ -19,8 +21,24 @@ class OrderViewSet(ModelViewSet):
     Набор представлений для действий над Order
     Полный CRUD для сущностей заказа
     """
+    # TODO доделать поиск
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+    filter_backends = [
+        SearchFilter,
+        DjangoFilterBackend,
+        OrderingFilter,
+    ]
+    search_fields = ["status"]
+    filterset_fields = [
+        "table_number",
+        "status",
+    ]
+    ordering_fields = [
+        "table_number",
+        "total_price",
+        "status",
+    ]
 
 
 def order_index(request: HttpRequest) -> HttpResponse:

@@ -12,13 +12,13 @@
     {% block body %}
         <h1>Base Body</h1>
     {% endblock %}
-
+    <br>
     <div>
-        {% now 'H:i' %}
+        Время: {% now 'H:i' %}
     </div>
     <div>
         {% now 'l' as current_weekday %}
-        Today is {{ current_weekday }}
+        {{ current_weekday }}
     </div>
 </body>
 </html>
