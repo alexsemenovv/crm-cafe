@@ -256,3 +256,38 @@ class OrderSearchListViewTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, "Готово")  # Не должно быть найденных заказов
         self.assertNotContains(response, "Оплачено")
+
+
+class OrderTotalIncomesListViewTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        """Создаем тестовые оплаченные и неоплаченные заказы"""
+        cls.order1 = Order.objects.create(table_number=1, status="Оплачено", total_price=100.50)
+        cls.order2 = Order.objects.create(table_number=2, status="Оплачено", total_price=200.75)
+        cls.order3 = Order.objects.create(table_number=3, status="Готово", total_price=50.00)  # Не должен считаться
+
+    def test_total_income_calculation(self):
+        """Тест подсчета общей выручки"""
+        response = self.client.get(reverse("ordersapp:total_incomes"))
+        self.assertEqual(response.status_code, 200)
+
+        # Проверяем, что на странице есть сумма 301.25 (100.50 + 200.75)
+        self.assertContains(response, "301.25")
+
+    def test_only_paid_orders_are_counted(self):
+        """Тест фильтрации: в список должны попадать только оплаченные заказы"""
+        response = self.client.get(reverse("ordersapp:total_incomes"))
+        self.assertEqual(response.status_code, 200)
+
+        # Проверяем, что есть только "Оплачено", но нет "Готово"
+        self.assertContains(response, "Оплачено")
+        self.assertNotContains(response, "Готово")
+
+    def test_no_orders(self):
+        """Тест страницы без заказов (если нет оплаченных заказов)"""
+        Order.objects.all().delete()  # Удаляем все заказы
+        response = self.client.get(reverse("ordersapp:total_incomes"))
+        self.assertEqual(response.status_code, 200)
+
+        # Проверяем, что на странице нет числа
+        self.assertNotContains(response, "301.25")
