@@ -11,12 +11,12 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from datetime import datetime
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATABASE_DIR = BASE_DIR / "database"
-DATABASE_DIR.mkdir(exist_ok=True) # создаём папку в которой будет БД
-
+DATABASE_DIR.mkdir(exist_ok=True)  # создаём папку в которой будет БД
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -28,7 +28,6 @@ SECRET_KEY = 'django-insecure-genv3x4y420gorjy#%$7*^(4e0@59z9ftp=&%so3wr*vj20soc
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -76,7 +75,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'crm.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
@@ -86,7 +84,6 @@ DATABASES = {
         'NAME': DATABASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -106,7 +103,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
@@ -117,7 +113,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
@@ -135,4 +130,40 @@ REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": [
         "django_filters.rest_framework.DjangoFilterBackend",
     ]
+}
+
+LOGDIR = BASE_DIR / "logs"
+LOGDIR.mkdir(exist_ok=True)
+LOGFILE_NAME = LOGDIR / f"django_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.log"
+LOGFILE_SIZE = 1 * 1024 * 1024  # 1мБ
+LOGFILE_COUNT = 3
+
+# Настройка логирования
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,  # параметр указывается для того, чтобы не отключать существующие логи
+    "formatters": {  # укаазание формата вывода
+        "verbose": {  # подробные логи
+            "format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+        }
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+        "logfile": {
+            "class": "logging.handlers.TimedRotatingFileHandler",
+            "filename": LOGFILE_NAME,  # имя файла
+            "backupCount": LOGFILE_COUNT,  # сколько файлов хранить
+            "formatter": "verbose",
+        }
+    },
+    "root": {
+        "handlers": [
+            "console",
+            "logfile",
+        ],
+        "level": "DEBUG",
+    },
 }
