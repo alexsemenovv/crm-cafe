@@ -89,7 +89,7 @@ class OrderCreateViewTestCase(TestCase):
     @classmethod
     def tearDown(cls):
         """
-        Удаляем заказ после теста
+        Удаляем блюда после теста
         """
         for dish in cls.dishes:
             dish.delete()
@@ -130,8 +130,6 @@ class OrderListViewTestCase(TestCase):
         for order in cls.orders:
             order.items.set(cls.dish)
 
-
-
     @classmethod
     def tearDown(cls) -> None:
         """
@@ -154,3 +152,42 @@ class OrderListViewTestCase(TestCase):
             transform=lambda d: d.pk,
         )
         self.assertTemplateUsed(response, "ordersapp/orders_list.html")
+
+
+class OrderDeleteViewTestCase(TestCase):
+    @classmethod
+    def setUp(cls) -> None:
+        """
+        Настройка перед запуском теста
+        """
+
+        # создаём блюдо для заказов
+        cls.dish = [Dish.objects.create(
+            name="Блюдо для теста",
+            price=0,
+        )]
+
+        # создаём заказ
+        cls.order = Order.objects.create(table_number=1)
+        cls.order.items.set(cls.dish)
+
+    @classmethod
+    def tearDown(cls):
+        """
+        Удаляем блюдо после теста
+        """
+        cls.dish[0].delete()
+
+    def test_delete_order(self):
+        """Тестирование удаления заказа"""
+        response = self.client.post(
+            reverse("ordersapp:order_delete", kwargs={"pk": self.order.pk})
+        )  # Отправляем POST-запрос на удаление
+        self.assertRedirects(response, reverse("ordersapp:orders_list"))  # Проверяем редирект
+        self.assertFalse(Order.objects.filter(pk=self.order.pk).exists())  # Проверяем, что заказ удален
+
+    def test_delete_nonexistent_order(self):
+        """Попытка удалить несуществующий заказ должна вернуть 404"""
+        non_existing_url = reverse("ordersapp:order_delete", kwargs={"pk": 9999999})
+        response = self.client.post(non_existing_url)
+        self.assertEqual(response.status_code, 404)
