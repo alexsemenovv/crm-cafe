@@ -229,3 +229,30 @@ class OrderUpdateViewTestCase(TestCase):
         self.assertTrue(
             Order.objects.filter(Q(pk=self.order.pk) & Q(status="Готово")).exists()
         )  # Проверяем, что статус обновлен
+
+
+class OrderSearchListViewTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        """Создаем тестовые заказы"""
+        cls.order1 = Order.objects.create(table_number=1, status="Готово")
+        cls.order2 = Order.objects.create(table_number=2, status="Оплачено")
+
+    def test_search_by_table_number(self):
+        """Тест поиска заказа по номеру стола"""
+        response = self.client.get(reverse("ordersapp:order_search"), {"q": "1"})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Готово")  # Проверяем, что найден заказ со столом 1
+
+    def test_search_by_status(self):
+        """Тест поиска заказа по статусу"""
+        response = self.client.get(reverse("ordersapp:order_search"), {"q": "Оплачено"})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Оплачено")  # Проверяем, что найден заказ со статусом "Оплачено"
+
+    def test_search_no_results(self):
+        """Тест поиска с несуществующим значением"""
+        response = self.client.get(reverse("ordersapp:order_search"), {"q": "Неизвестный статус"})
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, "Готово")  # Не должно быть найденных заказов
+        self.assertNotContains(response, "Оплачено")
