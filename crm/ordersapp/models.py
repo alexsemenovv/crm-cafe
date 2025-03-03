@@ -30,7 +30,8 @@ class Order(models.Model):
         ("Готово", "Готово"),
         ("Оплачено", "Оплачено"),
     ]
-    table_number = models.IntegerField(db_index=True)
+    TABLE_CHOICES = [(i, f"Стол {i}") for i in range(1, 10)]
+    table_number = models.IntegerField(choices=TABLE_CHOICES, db_index=True)
     items = models.ManyToManyField(Dish, related_name='orders')
     total_price = models.DecimalField(default=0, max_digits=8, decimal_places=2)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="В ожидании", db_index=True)
