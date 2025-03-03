@@ -29,6 +29,14 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+INTERNAL_IPS = [ # указываем ір адреса, которые могут пользоваться django debug toolbar
+    "127.0.0.1",
+]
+
+DEBUG_TOOLBAR_CONFIG = {
+    "SHOW_TOOLBAR_CALLBACK": lambda request: bool(DEBUG),
+}
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -39,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'debug_toolbar',
     'rest_framework',
     'django_filters',
 
@@ -53,6 +62,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'crm.urls'
@@ -164,6 +174,6 @@ LOGGING = {
             "console",
             "logfile",
         ],
-        "level": "DEBUG",
+        "level": "INFO",
     },
 }
