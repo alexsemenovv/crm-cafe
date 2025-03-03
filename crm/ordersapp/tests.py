@@ -1,6 +1,7 @@
 from string import ascii_letters
 from random import choices, randint
 
+from django.db.models import Q
 from django.test import TestCase
 from django.urls import reverse
 
@@ -161,7 +162,7 @@ class OrderDeleteViewTestCase(TestCase):
         Настройка перед запуском теста
         """
 
-        # создаём блюдо для заказов
+        # создаём блюдо для заказа
         cls.dish = [Dish.objects.create(
             name="Блюдо для теста",
             price=0,
@@ -191,3 +192,40 @@ class OrderDeleteViewTestCase(TestCase):
         non_existing_url = reverse("ordersapp:order_delete", kwargs={"pk": 9999999})
         response = self.client.post(non_existing_url)
         self.assertEqual(response.status_code, 404)
+
+
+class OrderUpdateViewTestCase(TestCase):
+    @classmethod
+    def setUp(cls) -> None:
+        """
+        Настройка перед запуском теста
+        """
+
+        # создаём блюдо для заказа
+        cls.dish = [Dish.objects.create(
+            name="Блюдо для теста",
+            price=0,
+        )]
+
+        # создаём заказ
+        cls.order = Order.objects.create(table_number=1)
+        cls.order.items.set(cls.dish)
+
+    @classmethod
+    def tearDown(cls):
+        """
+        Удаляем блюдо после теста
+        """
+        cls.dish[0].delete()
+
+    def test_update_order(self):
+        """Тестирование обновление статуса заказа"""
+        response = self.client.post(
+            reverse("ordersapp:order_update", kwargs={"pk": self.order.pk}),
+            {"status": "Готово", "items": self.dish[0].pk}
+        )  # Отправляем POST-запрос на обновление
+
+        self.assertRedirects(response, reverse("ordersapp:orders_list"))  # Проверяем редирект
+        self.assertTrue(
+            Order.objects.filter(Q(pk=self.order.pk) & Q(status="Готово")).exists()
+        )  # Проверяем, что статус обновлен
