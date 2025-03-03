@@ -43,6 +43,21 @@ class OrderViewSet(ModelViewSet):
         "status",
     ]
 
+    def list(self, request, *args, **kwargs):
+        log.debug("Получение списка заказов")
+        return super().list(request, *args, **kwargs)
+
+    def create(self, request, *args, **kwargs):
+        log.info(f"Создание заказа: {request.data}")
+        return super().create(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        log.info(f"Обновление заказа {kwargs.get('pk')}: {request.data}")
+        return super().update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        log.warning(f"Удаление заказа {kwargs.get('pk')}")
+        return super().destroy(request, *args, **kwargs)
 
 
 def order_index(request: HttpRequest) -> HttpResponse:
@@ -69,6 +84,10 @@ class DishCreateView(CreateView):
         "ordersapp:dishes_list"
     )
 
+    def form_valid(self, form):
+        log.info(f"Создано новое блюдо: {form.instance.name}")
+        return super().form_valid(form)
+
 
 class DishListView(ListView):
     """
@@ -78,6 +97,10 @@ class DishListView(ListView):
     template_name = "ordersapp/dishes_list.html"
     context_object_name = "dishes"
     queryset = Dish.objects.all()
+
+    def get_queryset(self):
+        log.debug("Запрос списка блюд")
+        return super().get_queryset()
 
 
 class OrderCreateView(CreateView):
@@ -93,6 +116,10 @@ class OrderCreateView(CreateView):
         "ordersapp:orders_list"
     )
 
+    def form_valid(self, form):
+        log.info(f"Создан новый заказ: стол {form.instance.table_number}")
+        return super().form_valid(form)
+
 
 class OrderListView(ListView):
     """
@@ -103,6 +130,10 @@ class OrderListView(ListView):
     context_object_name = "orders"
     queryset = Order.objects.all()
 
+    def get_queryset(self):
+        log.debug("Запрос списка заказов")
+        return super().get_queryset()
+
 
 class OrderDeleteView(DeleteView):
     """
@@ -111,6 +142,10 @@ class OrderDeleteView(DeleteView):
     log.debug("Order details")
     model = Order
     success_url = reverse_lazy("ordersapp:orders_list")
+
+    def delete(self, request, *args, **kwargs):
+        log.warning(f"Удаление заказа {kwargs.get('pk')}")
+        return super().delete(request, *args, **kwargs)
 
 
 class OrderUpdateView(UpdateView):
@@ -122,6 +157,10 @@ class OrderUpdateView(UpdateView):
     fields = ("status", "items")
     template_name_suffix = "_update_form"
     success_url = reverse_lazy("ordersapp:orders_list")
+
+    def form_valid(self, form):
+        log.info(f"Обновлен заказ {form.instance.pk}: статус {form.instance.status}")
+        return super().form_valid(form)
 
 
 class OrderSearchListView(ListView):
@@ -135,6 +174,7 @@ class OrderSearchListView(ListView):
 
     def get_queryset(self):
         query = self.request.GET.get('q')
+        log.debug(f"Поиск заказа по запросу: {query}")
         object_list = Order.objects.filter(
             Q(status__icontains=query) | Q(table_number__icontains=query)
         )
@@ -154,4 +194,5 @@ class OrderTotalIncomesListView(ListView):
             status__contains="Оплачено"
         )
         total = sum((item.total_price for item in orders.all()))
+        log.info(f"Общая выручка за смену: {total}")
         return orders, total
