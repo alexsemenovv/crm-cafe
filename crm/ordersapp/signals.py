@@ -1,6 +1,8 @@
 from django.db.models.signals import m2m_changed
 from django.dispatch import receiver
+
 from .models import Order
+
 
 @receiver(m2m_changed, sender=Order.items.through)
 def update_order_total_price(sender, instance, action, **kwargs):

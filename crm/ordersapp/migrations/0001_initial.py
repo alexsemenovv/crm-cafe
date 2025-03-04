@@ -7,29 +7,61 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Dish',
+            name="Dish",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(db_index=True, max_length=100)),
-                ('description', models.TextField(blank=True, db_index=True)),
-                ('price', models.DecimalField(decimal_places=2, default=0, max_digits=8)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(db_index=True, max_length=100)),
+                ("description", models.TextField(blank=True, db_index=True)),
+                (
+                    "price",
+                    models.DecimalField(decimal_places=2, default=0, max_digits=8),
+                ),
             ],
             options={
-                'verbose_name_plural': 'dishes',
+                "verbose_name_plural": "dishes",
             },
         ),
         migrations.CreateModel(
-            name='Order',
+            name="Order",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('table_number', models.IntegerField()),
-                ('status', models.CharField(choices=[('pending', 'В ожидании'), ('ready', 'Готово'), ('paid', 'Оплачено')], default='pending', max_length=10)),
-                ('items', models.ManyToManyField(related_name='orders', to='ordersapp.dish')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("table_number", models.IntegerField()),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("pending", "В ожидании"),
+                            ("ready", "Готово"),
+                            ("paid", "Оплачено"),
+                        ],
+                        default="pending",
+                        max_length=10,
+                    ),
+                ),
+                (
+                    "items",
+                    models.ManyToManyField(related_name="orders", to="ordersapp.dish"),
+                ),
             ],
         ),
     ]

@@ -1,20 +1,19 @@
 import logging
 from logging import Logger
-from typing import Type, List, Tuple, Any
+from typing import Any, List, Tuple, Type
 
 from django.db.models import Q, QuerySet
-from django.forms import Form
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import (
     CreateView,
-    ListView,
     DeleteView,
+    ListView,
     UpdateView,
 )
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.viewsets import ModelViewSet
 
 from .models import Dish, Order
@@ -35,6 +34,7 @@ class OrderViewSet(ModelViewSet):
         - filterset_fields: Поля, доступные для фильтрации (номер стола, статус).
         - ordering_fields: Поля, доступные для сортировки (номер стола, общая стоимость, статус).
     """
+
     queryset: QuerySet[Order] = Order.objects.all()
     serializer_class: Type[OrderSerializer] = OrderSerializer
     filter_backends: List[Type] = [
@@ -77,22 +77,18 @@ def order_index(request: HttpRequest) -> HttpResponse:
     :return: HttpResponse - шаблон в формате html
     """
     log.debug("Rendering order index")
-    return render(
-        request,
-        'ordersapp/base.html'
-    )
+    return render(request, "ordersapp/base.html")
 
 
 class DishCreateView(CreateView):
     """
     Класс для создания блюда
     """
+
     log.debug("Create new dish")
     model: Type[Dish] = Dish
     fields: Tuple[str] = "name", "description", "price"
-    success_url: str = reverse_lazy(
-        "ordersapp:dishes_list"
-    )
+    success_url: str = reverse_lazy("ordersapp:dishes_list")
 
     def form_valid(self, form: Any):
         log.info(f"Создано новое блюдо: {form.instance.name}")
@@ -103,6 +99,7 @@ class DishListView(ListView):
     """
     Класс для отображения списка блюд
     """
+
     log.debug("Dishes list")
     template_name: str = "ordersapp/dishes_list.html"
     context_object_name: str = "dishes"
@@ -117,6 +114,7 @@ class OrderCreateView(CreateView):
     """
     Класс для создания заказа
     """
+
     log.debug("Create order")
     model: Type[Order] = Order
     fields: Tuple[str, str] = ("table_number", "items")
@@ -133,6 +131,7 @@ class OrderListView(ListView):
     """
     Класс для отображения списка заказов
     """
+
     log.debug("Orders list")
     template_name: str = "ordersapp/orders_list.html"
     context_object_name: str = "orders"
@@ -147,6 +146,7 @@ class OrderDeleteView(DeleteView):
     """
     Класс для удаления заказа
     """
+
     log.debug("Order details")
     model: Type[Order] = Order
     success_url: str = reverse_lazy("ordersapp:orders_list")
@@ -160,6 +160,7 @@ class OrderUpdateView(UpdateView):
     """
     Класс для обновления статуса заказа
     """
+
     log.debug("Update status order")
     model: Type[Order] = Order
     fields: Tuple[str, str] = ("status", "items")
@@ -176,12 +177,13 @@ class OrderSearchListView(ListView):
     Класс для поиска заказа по номеру стола,
     либо статусу заказа
     """
+
     log.debug("Search order by status or table number")
     model: Type[Order] = Order
     template_name: str = "ordersapp/order_search.html"
 
     def get_queryset(self) -> QuerySet[Order]:
-        query: str = self.request.GET.get('q', '')
+        query: str = self.request.GET.get("q", "")
         log.debug(f"Поиск заказа по запросу: {query}")
         object_list: QuerySet[Order] = Order.objects.filter(
             Q(status__icontains=query) | Q(table_number__icontains=query)
@@ -193,6 +195,7 @@ class OrderTotalIncomesListView(ListView):
     """
     Класс для подсчета выручки за смену
     """
+
     log.debug("Total incomes order")
     model: Type[Order] = Order
     template_name: str = "ordersapp/total_incomes.html"

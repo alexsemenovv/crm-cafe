@@ -1,5 +1,5 @@
-from string import ascii_letters
 from random import choices, randint
+from string import ascii_letters
 
 from django.db.models import Q
 from django.test import TestCase
@@ -14,7 +14,9 @@ class DishCreateViewTestCase(TestCase):
         Настройка перед запуском теста.
         Генерируем случайное имя для блюда
         """
-        self.dish_name = "".join(choices(ascii_letters, k=10))  # создаём случайную строку
+        self.dish_name = "".join(
+            choices(ascii_letters, k=10)
+        )  # создаём случайную строку
 
     def tearDown(self) -> None:
         """
@@ -28,17 +30,15 @@ class DishCreateViewTestCase(TestCase):
         Тест на создание и добавление в БД нового блюда
         """
         response = self.client.post(
-            reverse('ordersapp:dish_create'),
+            reverse("ordersapp:dish_create"),
             {
                 "name": self.dish_name,
                 "description": "Новое супервкусное блюдо",
-                "price": "587"
-            }
+                "price": "587",
+            },
         )
         self.assertRedirects(response, reverse("ordersapp:dishes_list"))
-        self.assertTrue(
-            Dish.objects.filter(name=self.dish_name).exists()
-        )
+        self.assertTrue(Dish.objects.filter(name=self.dish_name).exists())
 
 
 class DishListViewTestCase(TestCase):
@@ -67,10 +67,12 @@ class DishListViewTestCase(TestCase):
         Метод проверяет список блюд,
         а также используемый шаблон
         """
-        response = self.client.get(reverse("ordersapp:dishes_list"))  # делаем запрос на страницу
+        response = self.client.get(
+            reverse("ordersapp:dishes_list")
+        )  # делаем запрос на страницу
         self.assertQuerySetEqual(
             qs=list(Dish.objects.filter(name__contains="Блюдо").all()),
-            values=(d.pk for d in response.context['dishes']),
+            values=(d.pk for d in response.context["dishes"]),
             transform=lambda d: d.pk,
         )
         self.assertTemplateUsed(response, "ordersapp/dishes_list.html")
@@ -83,7 +85,10 @@ class OrderCreateViewTestCase(TestCase):
         Создаём 3 новых блюда для добавления в заказ
         """
         cls.dishes = [
-            Dish.objects.create(name=f"Блюдо #{i}", price=i, )
+            Dish.objects.create(
+                name=f"Блюдо #{i}",
+                price=i,
+            )
             for i in range(3)
         ]
 
@@ -100,11 +105,11 @@ class OrderCreateViewTestCase(TestCase):
         Тест на создание и добавление в БД нового заказа
         """
         response = self.client.post(
-            reverse('ordersapp:order_create'),
+            reverse("ordersapp:order_create"),
             {
                 "table_number": randint(1, 9),
                 "items": self.dishes,
-            }
+            },
         )
         self.assertEqual(response.status_code, 200)
 
@@ -118,16 +123,15 @@ class OrderListViewTestCase(TestCase):
         """
 
         # создаём блюдо для заказов
-        cls.dish = [Dish.objects.create(
-            name=f"Блюдо для теста",
-            price=0,
-        )]
+        cls.dish = [
+            Dish.objects.create(
+                name=f"Блюдо для теста",
+                price=0,
+            )
+        ]
 
         # создаём 3 заказа с одинаковым блюдом
-        cls.orders = [
-            Order.objects.create(table_number=i)
-            for i in range(1, 4)
-        ]
+        cls.orders = [Order.objects.create(table_number=i) for i in range(1, 4)]
         for order in cls.orders:
             order.items.set(cls.dish)
 
@@ -146,10 +150,12 @@ class OrderListViewTestCase(TestCase):
         Метод проверяет список заказов, которые равны 0,
         а также используемый шаблон
         """
-        response = self.client.get(reverse("ordersapp:orders_list"))  # делаем запрос на страницу
+        response = self.client.get(
+            reverse("ordersapp:orders_list")
+        )  # делаем запрос на страницу
         self.assertQuerySetEqual(
             qs=list(Order.objects.filter(total_price="0").all()),
-            values=(d.pk for d in response.context['orders']),
+            values=(d.pk for d in response.context["orders"]),
             transform=lambda d: d.pk,
         )
         self.assertTemplateUsed(response, "ordersapp/orders_list.html")
@@ -163,10 +169,12 @@ class OrderDeleteViewTestCase(TestCase):
         """
 
         # создаём блюдо для заказа
-        cls.dish = [Dish.objects.create(
-            name="Блюдо для теста",
-            price=0,
-        )]
+        cls.dish = [
+            Dish.objects.create(
+                name="Блюдо для теста",
+                price=0,
+            )
+        ]
 
         # создаём заказ
         cls.order = Order.objects.create(table_number=1)
@@ -184,8 +192,12 @@ class OrderDeleteViewTestCase(TestCase):
         response = self.client.post(
             reverse("ordersapp:order_delete", kwargs={"pk": self.order.pk})
         )  # Отправляем POST-запрос на удаление
-        self.assertRedirects(response, reverse("ordersapp:orders_list"))  # Проверяем редирект
-        self.assertFalse(Order.objects.filter(pk=self.order.pk).exists())  # Проверяем, что заказ удален
+        self.assertRedirects(
+            response, reverse("ordersapp:orders_list")
+        )  # Проверяем редирект
+        self.assertFalse(
+            Order.objects.filter(pk=self.order.pk).exists()
+        )  # Проверяем, что заказ удален
 
     def test_delete_nonexistent_order(self):
         """Попытка удалить несуществующий заказ должна вернуть 404"""
@@ -202,10 +214,12 @@ class OrderUpdateViewTestCase(TestCase):
         """
 
         # создаём блюдо для заказа
-        cls.dish = [Dish.objects.create(
-            name="Блюдо для теста",
-            price=0,
-        )]
+        cls.dish = [
+            Dish.objects.create(
+                name="Блюдо для теста",
+                price=0,
+            )
+        ]
 
         # создаём заказ
         cls.order = Order.objects.create(table_number=1)
@@ -222,10 +236,12 @@ class OrderUpdateViewTestCase(TestCase):
         """Тестирование обновление статуса заказа"""
         response = self.client.post(
             reverse("ordersapp:order_update", kwargs={"pk": self.order.pk}),
-            {"status": "Готово", "items": self.dish[0].pk}
+            {"status": "Готово", "items": self.dish[0].pk},
         )  # Отправляем POST-запрос на обновление
 
-        self.assertRedirects(response, reverse("ordersapp:orders_list"))  # Проверяем редирект
+        self.assertRedirects(
+            response, reverse("ordersapp:orders_list")
+        )  # Проверяем редирект
         self.assertTrue(
             Order.objects.filter(Q(pk=self.order.pk) & Q(status="Готово")).exists()
         )  # Проверяем, что статус обновлен
@@ -242,17 +258,23 @@ class OrderSearchListViewTestCase(TestCase):
         """Тест поиска заказа по номеру стола"""
         response = self.client.get(reverse("ordersapp:order_search"), {"q": "1"})
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Готово")  # Проверяем, что найден заказ со столом 1
+        self.assertContains(
+            response, "Готово"
+        )  # Проверяем, что найден заказ со столом 1
 
     def test_search_by_status(self):
         """Тест поиска заказа по статусу"""
         response = self.client.get(reverse("ordersapp:order_search"), {"q": "Оплачено"})
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Оплачено")  # Проверяем, что найден заказ со статусом "Оплачено"
+        self.assertContains(
+            response, "Оплачено"
+        )  # Проверяем, что найден заказ со статусом "Оплачено"
 
     def test_search_no_results(self):
         """Тест поиска с несуществующим значением"""
-        response = self.client.get(reverse("ordersapp:order_search"), {"q": "Неизвестный статус"})
+        response = self.client.get(
+            reverse("ordersapp:order_search"), {"q": "Неизвестный статус"}
+        )
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, "Готово")  # Не должно быть найденных заказов
         self.assertNotContains(response, "Оплачено")
@@ -262,9 +284,15 @@ class OrderTotalIncomesListViewTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         """Создаем тестовые оплаченные и неоплаченные заказы"""
-        cls.order1 = Order.objects.create(table_number=1, status="Оплачено", total_price=100.50)
-        cls.order2 = Order.objects.create(table_number=2, status="Оплачено", total_price=200.75)
-        cls.order3 = Order.objects.create(table_number=3, status="Готово", total_price=50.00)  # Не должен считаться
+        cls.order1 = Order.objects.create(
+            table_number=1, status="Оплачено", total_price=100.50
+        )
+        cls.order2 = Order.objects.create(
+            table_number=2, status="Оплачено", total_price=200.75
+        )
+        cls.order3 = Order.objects.create(
+            table_number=3, status="Готово", total_price=50.00
+        )  # Не должен считаться
 
     def test_total_income_calculation(self):
         """Тест подсчета общей выручки"""
