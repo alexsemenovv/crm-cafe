@@ -1,3 +1,5 @@
+from typing import List
+
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
@@ -14,11 +16,11 @@ from .views import (
     OrderViewSet,
 )
 
-app_name = "ordersapp"
-routers = DefaultRouter()
+app_name: str = "ordersapp"
+routers: DefaultRouter = DefaultRouter()
 routers.register("orders", OrderViewSet)
 
-urlpatterns = [
+urlpatterns: List[path] = [
     path("", order_index, name="index"),
     path("api/", include(routers.urls)),
     path("dishes/create/", DishCreateView.as_view(), name='dish_create'),
