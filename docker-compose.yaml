@@ -1,0 +1,21 @@
+services:
+  app:
+    build:
+      dockerfile: ./Dockerfile
+    command: # запуск команды после сборки контейнера. Альтернатива  CMD
+      - "gunicorn"
+      - "mysite.wsgi:application"
+      - "--bind"
+      - "0.0.0.0:8000"
+    ports:
+      - "8000:8000"
+    restart: always # если будет критическая ошибка, то контейнер перезапуститься(НЕ ЯВЯЛЕТСЯ УНИВЕРСАЛЬНЫМ РЕШЕНИЕМ!!!)
+    env_file: # файл для настройки окр
+      - .env
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "10" # кол-во файлов
+        max-size: "200k" #размер файлов 200кБ
+    volumes:
+      - ./mysite/database:/app/database
