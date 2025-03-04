@@ -58,6 +58,12 @@
     <div>
       <a href="{% url 'ordersapp:total_incomes' %}">Выручка за смену</a>
     </div>
+    <div>
+      <a href="{% url 'ordersapp:order_create' %}">Создать заказ</a>
+    </div>
+    <div>
+      <a href="{% url 'ordersapp:dish_create' %}">Создать блюдо</a>
+    </div>
   {% else %}
     <h3>Скоро здесь появятся заказы</h3>
   {% endif %}

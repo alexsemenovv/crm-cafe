@@ -33,7 +33,7 @@ class Order(models.Model):
         ("Готово", "Готово"),
         ("Оплачено", "Оплачено"),
     ]
-    TABLE_CHOICES: Generator[int] = [
+    TABLE_CHOICES: List[tuple[int, str]] = [
         (i, f"Стол {i}") for i in range(1, 10)
     ]
     table_number: Field = models.IntegerField(choices=TABLE_CHOICES, db_index=True)
