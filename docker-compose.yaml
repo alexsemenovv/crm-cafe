@@ -4,7 +4,7 @@ services:
       dockerfile: ./Dockerfile
     command: # запуск команды после сборки контейнера. Альтернатива  CMD
       - "gunicorn"
-      - "mysite.wsgi:application"
+      - "crm.wsgi:application"
       - "--bind"
       - "0.0.0.0:8000"
     ports:
@@ -18,4 +18,4 @@ services:
         max-file: "10" # кол-во файлов
         max-size: "200k" #размер файлов 200кБ
     volumes:
-      - ./mysite/database:/app/database
+      - ./crm/database:/app/database

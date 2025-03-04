@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 import sys
+from os import getenv
 from pathlib import Path
 from datetime import datetime
 
@@ -23,12 +24,19 @@ DATABASE_DIR.mkdir(exist_ok=True)  # создаём папку в которой
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-genv3x4y420gorjy#%$7*^(4e0@59z9ftp=&%so3wr*vj20soc"
+SECRET_KEY = getenv(
+    "DJANGO_SECRET_KEY",
+    "django-insecure-genv3x4y420gorjy#%$7*^(4e0@59z9ftp=&%so3wr*vj20soc",
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = getenv("DJANGO_DEBUG", "0") == "1"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "0.0.0.0",
+    "172.17.0.1",
+] + getenv("DJANGO_ALLOWED_HOSTS", "").split(",")
 
 INTERNAL_IPS = [  # указываем ір адреса, которые могут пользоваться django debug toolbar
     "127.0.0.1",
